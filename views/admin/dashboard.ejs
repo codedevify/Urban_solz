@@ -252,21 +252,22 @@ form button:hover{
     <button>Add Product</button>
   </form>
 
-  <h2>Edit Products</h2>
-  <div class="product-grid">
-    <% products.forEach(p => { %>
-      <div class="product-card">
-        <img src="<%= p.imagePath %>" alt="<%= p.name %>">
-        <form action="/admin/product/edit/<%= p._id %>" method="POST" enctype="multipart/form-data">
-          <input type="text" name="name" value="<%= p.name %>">
-          <input type="text" name="desc" value="<%= p.description %>">
-          <input type="number" name="price" value="<%= p.price %>">
-          <input type="file" name="image" accept="image/*">
-          <button>Update</button>
-        </form>
-      </div>
-    <% }) %>
-  </div>
+ <h2>Edit Products</h2>
+<div class="product-grid">
+  <% products.forEach(p => { %>
+    <div class="product-card">
+      <img src="<%= p.image %>" alt="<%= p.name %>">
+      <form action="/admin/product/edit/<%= p._id %>" method="POST" enctype="multipart/form-data">
+        <input type="text" name="name" value="<%= p.name %>">
+        <input type="text" name="desc" value="<%= p.description %>">
+        <input type="number" name="price" value="<%= p.price %>">
+        <input type="file" name="image" accept="image/*">
+        <button>Update</button>
+      </form>
+    </div>
+  <% }) %>
+</div>
+
 
 </main>
 </body>
