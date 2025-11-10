@@ -4,244 +4,474 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Urban Solz</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
-/* === RESET & BASE === */
+/* ==== RESET & TYPOGRAPHY ==== */
 *{margin:0;padding:0;box-sizing:border-box}
 body{
-  font-family:'Poppins',sans-serif;
-  background:linear-gradient(180deg,#f6f0e9 0%,#f5deb3 100%);
-  color:#3e2723;
+  font-family:'Inter',sans-serif;
+  background:#faf9f7;
+  color:#2d1e12;
+  line-height:1.7;
   overflow-x:hidden;
   scroll-behavior:smooth;
 }
-a{text-decoration:none;color:inherit}
+h1,h2,h3,h4{font-family:'Playfair Display',serif;font-weight:700;}
+a{text-decoration:none;color:inherit;}
 
-/* === HEADER === */
+/* ==== HEADER ==== */
 header{
-  background:rgba(255,255,255,0.95);
-  backdrop-filter:blur(10px);
-  position:sticky;top:0;z-index:1000;
+  position:fixed;top:0;left:0;width:100%;
+  background:rgba(255,255,255,0.94);
+  backdrop-filter:blur(12px);
+  z-index:1000;
+  padding:1rem 5%;
   display:flex;justify-content:space-between;align-items:center;
-  padding:0.8rem 6%;
-  box-shadow:0 4px 10px rgba(0,0,0,0.05);
+  box-shadow:0 2px 15px rgba(0,0,0,0.06);
+  transition:box-shadow .3s;
 }
-header h1{font-size:1.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:#3e2723;}
-nav a{margin-left:25px;font-weight:500;color:#4e342e;transition:color .3s}
-nav a:hover{color:#a1887f}
+header.scrolled{box-shadow:0 4px 25px rgba(0,0,0,0.1);}
+.logo{font-size:1.9rem;font-weight:700;letter-spacing:1.2px;color:#2d1e12;}
+nav.desktop a{
+  margin-left:2.2rem;font-weight:500;font-size:.95rem;
+  color:#5d4037;letter-spacing:.5px;position:relative;
+  transition:color .3s;cursor:pointer;
+}
+nav.desktop a::after{
+  content:"";position:absolute;bottom:-6px;left:0;width:0;height:1.5px;
+  background:#a1887f;transition:width .3s;
+}
+nav.desktop a:hover{color:#a1887f;}
+nav.desktop a:hover::after{width:100%;}
+nav.desktop a.active{color:#a1887f;}
+nav.desktop a.active::after{width:100%;}
 
-/* === HERO === */
+/* ==== SEARCH ==== */
+.search-container{position:relative;max-width:300px;width:100%;}
+.search-wrapper{position:relative;}
+.search-input{
+  width:100%;padding:10px 45px 10px 15px;
+  border:1px solid #ddd;border-radius:30px;font-size:.95rem;
+  background:#fff;transition:all .3s;outline:none;
+}
+.search-input:focus{border-color:#a1887f;box-shadow:0 0 0 3px rgba(161,136,127,.15);}
+.search-btn{
+  position:absolute;right:5px;top:50%;transform:translateY(-50%);
+  background:none;border:none;cursor:pointer;font-size:1.2rem;
+  color:#8d6e63;transition:color .3s;
+}
+.search-btn:hover{color:#a1887f;}
+
+/* Search Dropdown */
+.search-dropdown{
+  position:absolute;top:100%;left:0;width:100%;
+  background:#fff;border-radius:12px;margin-top:8px;
+  box-shadow:0 10px 30px rgba(0,0,0,.12);max-height:320px;
+  overflow-y:auto;display:none;z-index:999;
+}
+.search-dropdown.active{display:block;}
+.search-item{
+  padding:12px 16px;border-bottom:1px solid #eee;cursor:pointer;
+  transition:background .2s;
+}
+.search-item:hover{background:#f9f5f2;}
+.search-item strong{font-weight:600;}
+.search-item small{color:#8d6e63;font-size:.85rem;display:block;}
+
+/* ==== MOBILE NAV ICONS ==== */
+.mobile-nav-icons{
+  display:flex;gap:1rem;align-items:center;
+}
+.cart-icon{
+  font-size:1.4rem;color:#2d1e12;position:relative;cursor:pointer;
+}
+.cart-count{
+  position:absolute;top:-6px;right:-10px;
+  background:#a1887f;color:#fff;font-size:.65rem;
+  width:16px;height:16px;border-radius:50%;
+  display:flex;align-items:center;justify-content:center;
+  font-weight:600;
+}
+.hamburger{
+  display:none;cursor:pointer;z-index:1001;
+}
+.hamburger span{
+  display:block;width:24px;height:2px;background:#2d1e12;
+  margin:5px 0;transition:all .3s;
+}
+.hamburger.active span:nth-child(1){transform:rotate(45deg) translate(6px,6px);}
+.hamburger.active span:nth-child(2){opacity:0;}
+.hamburger.active span:nth-child(3){transform:rotate(-45deg) translate(7px,-7px);}
+
+/* ==== MOBILE MENU ==== */
+.mobile-menu{
+  position:fixed;top:0;right:-100%;width:100%;max-width:320px;height:100vh;
+  background:#fff;padding:6rem 2rem 2rem;transition:right .4s ease;
+  box-shadow:-10px 0 30px rgba(0,0,0,.1);z-index:1000;
+}
+.mobile-menu.active{right:0;}
+.mobile-menu .close-btn{
+  position:absolute;top:1.5rem;right:1.5rem;font-size:1.8rem;
+  cursor:pointer;color:#999;transition:color .3s;
+}
+.mobile-menu .close-btn:hover{color:#2d1e12;}
+.mobile-menu a{
+  display:block;padding:1rem 0;font-size:1.1rem;
+  font-weight:500;color:#5d4037;border-bottom:1px solid #eee;
+  transition:color .3s;cursor:pointer;
+}
+.mobile-menu a:last-child{border-bottom:none;}
+.mobile-menu a:hover{color:#a1887f;}
+.mobile-menu a.active{color:#a1887f;font-weight:600;}
+
+/* ==== HERO (WHITE TEXT) ==== */
 .hero{
-  position:relative;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;
-  padding:100px 8%;overflow:hidden;
-  background:linear-gradient(135deg,#fff8ef,#f5deb3);
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  text-align:center;position:relative;overflow:hidden;
+  padding:120px 5% 80px;
 }
 .hero::before{
   content:"";position:absolute;top:0;left:0;width:100%;height:100%;
-  background:url('https://images.unsplash.com/photo-1606813902917-0e6767bbf4e2?auto=format&fit=crop&w=1600&q=80') center/cover no-repeat;
-  opacity:0.25;z-index:-1;animation:bgmove 18s ease-in-out infinite alternate;
+  background:url('https://raw.githubusercontent.com/codedevify/shoe/refs/heads/main/image%20(14).png') center/cover no-repeat;
+  filter:blur(4px) brightness(0.8);
+  z-index:-1;
 }
-@keyframes bgmove{from{transform:scale(1);}to{transform:scale(1.08);}}
-.hero-text{color:#3e2723;max-width:550px;animation:fadeslide 1s ease forwards;}
-.hero-text h2{font-size:3rem;font-weight:800;text-transform:uppercase;margin-bottom:15px;letter-spacing:2px;}
-.hero-text p{font-size:1.1rem;margin-bottom:25px;line-height:1.6;color:#4e342e;}
-.hero-text button{
-  background:#3e2723;color:#fff;border:none;border-radius:30px;
-  padding:12px 40px;font-size:1rem;font-weight:600;cursor:pointer;
-  transition:transform .3s,background .3s,color .3s;
-  box-shadow:0 5px 15px rgba(0,0,0,0.15);
+.hero-content{max-width:900px;color:#ffffff !important;}
+.hero h1{
+  font-size:4.2rem;line-height:1.1;margin-bottom:1.5rem;
+  color:#ffffff;letter-spacing:-1.5px;text-shadow:0 2px 10px rgba(0,0,0,0.3);
 }
-.hero-text button:hover{background:#a1887f;color:#3e2723;transform:scale(1.07);}
-.hero img{width:420px;max-width:100%;border-radius:25px;animation:float 4s ease-in-out infinite;box-shadow:0 15px 30px rgba(0,0,0,0.2);}
-@keyframes fadeslide{from{opacity:0;transform:translateY(40px);}to{opacity:1;transform:translateY(0);}}
-@keyframes float{0%,100%{transform:translateY(0);}50%{transform:translateY(-15px);}}
+.hero p{
+  font-size:1.15rem;color:#f0f0f0;margin-bottom:2.5rem;
+  max-width:600px;margin-left:auto;margin-right:auto;
+  text-shadow:0 1px 5px rgba(0,0,0,0.2);
+}
+.hero button{
+  background:#ffffff;color:#2d1e12;border:none;
+  padding:15px 45px;font-size:1rem;font-weight:600;
+  border-radius:50px;cursor:pointer;transition:all .3s;
+  box-shadow:0 6px 20px rgba(0,0,0,.3);
+}
+.hero button:hover{
+  background:#a1887f;color:#fff;transform:translateY(-3px);
+  box-shadow:0 12px 30px rgba(0,0,0,.4);
+}
 
-/* === PRODUCT GRID === */
+/* ==== SECTIONS (for scroll) ==== */
+section{padding-top:80px;}
+
+/* ==== PRODUCTS ==== */
+.products-section{padding:100px 5%;text-align:center;position:relative;z-index:1;}
+.products-section h2{font-size:2.6rem;margin-bottom:1rem;color:#2d1e12;}
+.products-section p{
+  color:#8d6e63;margin-bottom:3rem;max-width:700px;
+  margin-left:auto;margin-right:auto;
+}
+.no-results{
+  text-align:center;color:#8d6e63;font-size:1.1rem;margin-top:2rem;
+  display:none;
+}
+
+/* Fixed height cards + ellipsis + visible button */
 .product-grid{
   display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
-  gap:40px;padding:80px 8%;
+  gap:2rem;max-width:1400px;margin:0 auto;
+}
+@media(max-width:640px){
+  .product-grid{grid-template-columns:repeat(2,1fr);gap:1.2rem;}
 }
 .product-card{
-  background:#fff;border-radius:25px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.08);
-  overflow:hidden;opacity:0;transform:translateY(60px);
-  transition:all .8s ease;
+  background:#fff;border-radius:16px;overflow:hidden;
+  box-shadow:0 8px 25px rgba(0,0,0,.06);
+  opacity:0;transform:translateY(30px);
+  transition:all .6s ease;cursor:pointer;
+  height:360px;display:flex;flex-direction:column;
+}
+@media(max-width:640px){
+  .product-card{height:380px !important;} /* Increased height on mobile */
 }
 .product-card.visible{opacity:1;transform:translateY(0);}
-.product-card:hover{transform:translateY(-10px);}
-.product-card img{width:100%;height:240px;object-fit:cover;transition:transform .4s;}
-.product-card:hover img{transform:scale(1.08);}
-.product-info{text-align:center;padding:22px;color:#3e2723;}
-.product-info h3{font-size:1.2rem;margin-bottom:8px;}
-.product-info p{font-size:.95rem;color:#4e342e;margin-bottom:10px;}
-.product-info strong{display:block;margin-bottom:15px;font-size:1.1rem;}
+.product-card:hover{
+  transform:translateY(-8px);box-shadow:0 16px 35px rgba(0,0,0,.12);
+}
+.product-card img{
+  width:100%;height:160px;object-fit:cover;
+  transition:transform .5s;
+}
+.product-card:hover img{transform:scale(1.06);}
+.product-info{
+  padding:1rem;text-align:center;flex-grow:1;display:flex;flex-direction:column;
+}
+.product-info h3{
+  font-size:1.15rem;margin-bottom:.4rem;color:#2d1e12;
+}
+.product-info p{
+  font-size:.88rem;color:#8d6e63;margin-bottom:.8rem;
+  display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;
+  overflow:hidden;text-overflow:ellipsis;flex-grow:1;
+}
+.product-info strong{
+  display:block;margin: .6rem 0 .8rem;font-size:1.05rem;color:#2d1e12;
+}
+.product-card form{
+  margin-top:auto;
+}
 .product-card button{
-  background:#3e2723;color:#fff;border:none;border-radius:25px;
-  padding:10px 25px;cursor:pointer;font-size:.95rem;transition:all .3s;
+  background:#2d1e12;color:#fff;border:none;
+  padding:10px 20px;border-radius:50px;font-size:.9rem;
+  cursor:pointer;transition:all .3s;font-weight:500;width:100%;
 }
-.product-card button:hover{background:#a1887f;color:#3e2723;transform:scale(1.05);}
-
-/* === TRENDING SLIDER === */
-.trending-section{
-  padding:60px 0;background:linear-gradient(135deg,#fff8ef,#f5deb3);
-  text-align:center;overflow:hidden;
-}
-.trending-section h2{
-  font-size:2rem;font-weight:700;margin-bottom:25px;color:#3e2723;
-  text-transform:uppercase;letter-spacing:1px;
-}
-.trending-slider{
-  display:flex;gap:30px;
-  width:max-content;
-  animation:scroll 40s linear infinite;
-}
-.trending-slider:hover{animation-play-state:paused;}
-.trending-item{
-  background:#fff;border-radius:20px;box-shadow:0 8px 20px rgba(0,0,0,0.1);
-  padding:15px;width:240px;flex:0 0 auto;transition:transform .3s;
-  overflow:hidden;
-}
-.trending-item img,
-.trending-item .placeholder{
-  width:100%;height:200px;border-radius:15px;
-  background:#ddd;position:relative;overflow:hidden;
-}
-.trending-item p{margin-top:10px;font-weight:500;color:#4e342e;}
-.trending-item:hover{transform:scale(1.05);}
-
-/* Shimmer effect for missing/placeholder images */
-.placeholder::after{
-  content:"";
-  position:absolute;
-  top:0;left:-150px;
-  width:100px;height:100%;
-  background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,0.5),rgba(255,255,255,0));
-  animation:shimmer 1.5s infinite;
-}
-@keyframes shimmer{
-  0%{left:-150px;}
-  100%{left:100%;}
+.product-card button:hover{
+  background:#a1887f;transform:scale(1.02);
 }
 
-/* Infinite scroll effect */
-@keyframes scroll{
-  0%{transform:translateX(0);}
-  100%{transform:translateX(-50%);}
+/* ==== ABOUT & CONTACT (BOTTOM) ==== */
+.bottom-section{
+  padding:80px 5%;text-align:center;background:#f9f5f2;
+}
+.bottom-section h2{
+  font-size:2.4rem;margin-bottom:1rem;color:#2d1e12;
+}
+.bottom-section p{
+  color:#8d6e63;max-width:700px;margin:0 auto 1.5rem;
+  font-size:1.05rem;
+}
+.bottom-section a{
+  color:#a1887f;font-weight:600;
 }
 
-/* === FOOTER === */
+/* ==== MODAL ==== */
+.modal{
+  display:none;position:fixed;top:0;left:0;width:100%;height:100%;
+  background:rgba(0,0,0,.7);z-index:2000;align-items:center;justify-content:center;
+  padding:2rem;overflow-y:auto;
+}
+.modal.active{display:flex;}
+.modal-content{
+  background:#fff;max-width:600px;width:100%;max-height:88vh;
+  border-radius:20px;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.3);
+  animation:modalFade .4s ease;
+  display:flex;flex-direction:column;
+}
+@keyframes modalFade{from{opacity:0;transform:scale(.92);}to{opacity:1;transform:scale(1);}}
+.modal-img img{
+  width:100%;height:260px;object-fit:cover;
+}
+.modal-body{
+  padding:1.8rem;text-align:center;flex-grow:1;
+}
+.modal-body h3{
+  font-size:1.8rem;margin-bottom:.6rem;color:#2d1e12;
+}
+.modal-body p{
+  font-size:.95rem;color:#5d4037;margin-bottom:1rem;line-height:1.6;
+}
+.modal-body strong{
+  display:block;font-size:1.5rem;margin-bottom:1.2rem;color:#2d1e12;
+}
+.modal-body button{
+  background:#2d1e12;color:#fff;border:none;
+  padding:11px 32px;border-radius:50px;font-size:.95rem;
+  cursor:pointer;transition:all .3s;
+}
+.modal-body button:hover{
+  background:#a1887f;transform:scale(1.05);
+}
+.modal-close{
+  position:absolute;top:1rem;right:1rem;
+  background:none;border:none;font-size:1.8rem;
+  color:#999;cursor:pointer;transition:color .3s;z-index:10;
+}
+.modal-close:hover{color:#2d1e12;}
+
+/* ==== FOOTER ==== */
 footer{
-  background:#2e1f12;color:#e9d5b4;
-  padding:60px 8% 30px;
+  background:#2d1e12;color:#e8e0d8;padding:80px 5% 40px;
+  font-size:.95rem;position:relative;z-index:1;
 }
 .footer-grid{
-  display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:40px;
-  margin-bottom:40px;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+  gap:3rem;max-width:1400px;margin:0 auto 3rem;
 }
-.footer-grid h4{color:#fff;margin-bottom:15px;font-size:1.1rem;font-weight:600;}
-.footer-grid a,.footer-grid p{
-  display:block;font-size:.9rem;color:#d7c4a3;margin-bottom:10px;
+.footer-col h4{
+  color:#fff;font-size:1.3rem;margin-bottom:1rem;
+  font-family:'Playfair Display',serif;
+}
+.footer-col a,.footer-col p{
+  display:block;color:#d7c4a3;margin-bottom:.8rem;
   transition:color .3s;
 }
-.footer-grid a:hover{color:#fff;}
-.footer-bottom{
-  border-top:1px solid rgba(255,255,255,0.1);
-  padding-top:20px;text-align:center;font-size:.85rem;color:#cdb48a;
+.footer-col a:hover{color:#fff;}
+.socials a{
+  font-size:1.3rem;margin-right:1rem;color:#d7c4a3;
+  transition:transform .3s,color .3s;
 }
-.socials a{margin:0 10px;font-size:1.2rem;color:#d7c4a3;transition:color .3s,transform .3s;}
 .socials a:hover{color:#fff;transform:translateY(-3px);}
-
-/* === RESPONSIVE === */
-@media(max-width:900px){
-  .hero{flex-direction:column;text-align:center;padding:80px 6%;}
-  .hero-text h2{font-size:2.5rem;}
-  .hero img{margin-top:40px;width:80%;}
+.footer-bottom{
+  border-top:1px solid rgba(255,255,250,.1);
+  padding-top:1.5rem;text-align:center;
+  color:#b39e85;font-size:.85rem;
 }
-@media(max-width:600px){
-  header h1{font-size:1.3rem;}
-  .hero-text h2{font-size:2rem;}
-  .hero-text p{font-size:1rem;}
-  footer{padding:40px 6% 25px;}
+
+/* ==== RESPONSIVE ==== */
+@media(max-width:992px){
+  .hero h1{font-size:3.5rem;}
+  .search-container{max-width:250px;}
+}
+@media(max-width:768px){
+  .hamburger{display:block;}
+  nav.desktop,.search-container{display:none;}
+  .mobile-nav-icons{display:flex;}
+  .hero{padding:140px 5% 80px;}
+  .hero h1{font-size:3rem;}
+}
+@media(max-width:480px){
+  .hero h1{font-size:2.4rem;}
+  .hero button{padding:12px 32px;}
+  .products-section h2{font-size:2rem;}
 }
 </style>
 </head>
 <body>
-<header>
-  <h1>Urban Solz</h1>
-  <nav>
+
+<!-- HEADER -->
+<header id="header">
+  <div class="logo">Urban Solz</div>
+  <nav class="desktop">
+    <a onclick="scrollToSection('hero')">Home</a>
+    <a onclick="scrollToSection('products-section')">Shop</a>
+    <a onclick="scrollToSection('about')">About</a>
+    <a onclick="scrollToSection('contact')">Contact</a>
     <a href="/cart">Cart (<%= (cart || []).reduce((s,i)=>s+i.quantity,0) %>)</a>
     <a href="/admin/login">Admin</a>
   </nav>
+
+  <!-- Desktop Search -->
+  <div class="search-container">
+    <div class="search-wrapper">
+      <input type="text" class="search-input" id="searchInput" placeholder="Search heels, sandals..." autocomplete="off">
+      <button class="search-btn">Search</button>
+      <div class="search-dropdown" id="searchDropdown"></div>
+    </div>
+  </div>
+
+  <!-- Mobile Icons -->
+  <div class="mobile-nav-icons">
+    <a href="/cart" class="cart-icon">Cart<span class="cart-count"><%= (cart || []).reduce((s,i)=>s+i.quantity,0) %></span></a>
+    <div class="hamburger" id="hamburger">
+      <span></span><span></span><span></span>
+    </div>
+  </div>
 </header>
 
-<section class="hero">
-  <div class="hero-text">
-    <h2>Runway Ready</h2>
-    <p>Urban Solz — where streetwear meets luxury. Discover fashion-forward footwear crafted to turn sidewalks into runways.</p>
-    <button onclick="window.location.href='/cart'">Shop the Collection</button>
+<!-- MOBILE MENU -->
+<div class="mobile-menu" id="mobileMenu">
+  <div class="close-btn" id="closeMenu">×</div>
+  <a onclick="scrollToSection('hero'); closeMobileMenu()">Home</a>
+  <a onclick="scrollToSection('products-section'); closeMobileMenu()">Shop</a>
+  <a onclick="scrollToSection('about'); closeMobileMenu()">About</a>
+  <a onclick="scrollToSection('contact'); closeMobileMenu()">Contact</a>
+  <a href="/cart">Cart (<%= (cart || []).reduce((s,i)=>s+i.quantity,0) %>)</a>
+  <a href="/admin/login">Admin</a>
+  <input type="text" class="search-input" id="mobileSearch" placeholder="Search heels, sandals..." style="margin:1rem 0;padding:12px 15px;border-radius:30px;border:1px solid #ddd;">
+</div>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <div class="hero-content">
+    <h1>Step Into Elegance</h1>
+    <p>Urban Solz — where feminine style meets luxury. Discover handcrafted heels, sandals, and boots designed to make every step a statement.</p>
+    <button onclick="scrollToSection('products-section')">Shop Collection</button>
   </div>
-  <img src="https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=900&q=80" alt="Urban Solz Shoe">
 </section>
 
-<main>
-  <div class="product-grid">
+<!-- PRODUCTS -->
+<section class="products-section" id="products-section">
+  <h2>Our Collection</h2>
+  <p>Elevate your wardrobe with premium footwear that blends comfort, sophistication, and urban femininity.</p>
+  <div id="noResults" class="no-results">No shoes found matching your search.</div>
+  <div class="product-grid" id="productGrid">
     <% products.forEach(p => { %>
-      <div class="product-card">
+      <div class="product-card"
+           data-name="<%= p.name.toLowerCase() %>"
+           data-desc="<%= p.description.toLowerCase() %>"
+           data-id="<%= p._id %>"
+           data-img="<%= p.image %>"
+           data-price="<%= p.price %>">
         <img src="<%= p.image %>" alt="<%= p.name %>">
         <div class="product-info">
           <h3><%= p.name %></h3>
           <p><%= p.description %></p>
           <strong>$<%= p.price %></strong>
           <form action="/add-to-cart/<%= p._id %>" method="POST">
-            <button>Add to Cart</button>
+            <button type="submit">Add to Cart</button>
           </form>
         </div>
       </div>
     <% }) %>
   </div>
-</main>
-
-<!-- === TRENDING SECTION === -->
-<section class="trending-section">
-  <h2>Trending Now</h2>
-  <div class="trending-slider">
-    <% for(let i=0;i<8;i++){ %>
-    <div class="trending-item">
-      <div class="placeholder"></div>
-      <p>Coming Soon...</p>
-    </div>
-    <% } %>
-  </div>
 </section>
 
+<!-- ABOUT (BOTTOM) -->
+<section class="bottom-section" id="about">
+  <h2>About Urban Solz</h2>
+  <p>We craft luxury footwear for the modern woman. Every pair is designed with passion, precision, and a touch of urban elegance — because you deserve to walk with confidence.</p>
+  <p><a href="#">Learn More</a></p>
+</section>
+
+<!-- CONTACT (BOTTOM) -->
+<section class="bottom-section" id="contact" style="background:#fff;">
+  <h2>Get inthe Touch</h2>
+  <p>We’d love to hear from you. Whether it’s a question, feedback, or styling advice — we’re here.</p>
+  <p>Email: <a href="mailto:support@urbansolz.com">support@urbansolz.com</a> | Tel: <a href="tel:+18005557659">+1 (800) 555-SOLZ</a></p>
+</section>
+
+<!-- MODAL -->
+<div class="modal" id="productModal">
+  <div class="modal-content">
+    <button class="modal-close" id="modalClose">×</button>
+    <div class="modal-img"><img id="modalImg" src="" alt=""></div>
+    <div class="modal-body">
+      <h3 id="modalName"></h3>
+      <p id="modalDesc"></p>
+      <strong id="modalPrice"></strong>
+      <form id="modalForm" action="" method="POST">
+        <button type="submit">Add to Cart</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
 <footer>
   <div class="footer-grid">
-    <div>
+    <div class="footer-col">
       <h4>Urban Solz</h4>
-      <p>Luxury footwear redefining urban fashion.<br> Crafted with precision, designed for confidence.</p>
+      <p>Luxury women’s footwear. Designed for confidence, crafted for elegance.</p>
     </div>
-    <div>
+    <div class="footer-col">
       <h4>Shop</h4>
-      <a href="#">Men</a>
-      <a href="#">Women</a>
-      <a href="#">New Arrivals</a>
-      <a href="#">Collections</a>
+      <a onclick="scrollToSection('products-section')">Heels</a>
+      <a onclick="scrollToSection('products-section')">Sandals</a>
+      <a onclick="scrollToSection('products-section')">Boots</a>
+      <a onclick="scrollToSection('products-section')">New Arrivals</a>
     </div>
-    <div>
+    <div class="footer-col">
       <h4>Support</h4>
-      <a href="#">Contact Us</a>
-      <a href="#">Shipping & Returns</a>
-      <a href="#">FAQ</a>
-      <a href="#">Privacy Policy</a>
+      <a onclick="scrollToSection('contact')">Contact Us</a>
+      <a href="/shipping">Shipping & Returns</a>
+      <a href="/size-guide">Size Guide</a>
+      <a href="/privacy">Privacy Policy</a>
     </div>
-    <div>
+    <div class="footer-col">
       <h4>Connect</h4>
       <div class="socials">
-        <a href="https://instagram.com" target="_blank">📸</a>
-        <a href="https://facebook.com" target="_blank">📘</a>
-        <a href="https://twitter.com" target="_blank">🐦</a>
-        <a href="https://tiktok.com" target="_blank">🎵</a>
+        <a href="https://instagram.com" target="_blank">Instagram</a>
+        <a href="https://tiktok.com" target="_blank">TikTok</a>
+        <a href="https://pinterest.com" target="_blank">Pinterest</a>
+        <a href="https://facebook.com" target="_blank">Facebook</a>
       </div>
-      <p>Email: support@urbansolz.com<br>Tel: +1 (800) 555-SOLZ</p>
     </div>
   </div>
   <div class="footer-bottom">
@@ -250,15 +480,143 @@ footer{
 </footer>
 
 <script>
-const cards=document.querySelectorAll('.product-card');
-function revealOnScroll(){
-  const trigger=window.innerHeight*0.9;
-  cards.forEach(c=>{
-    if(c.getBoundingClientRect().top<trigger)c.classList.add('visible');
-  });
+/* ==== SCROLL TO SECTION ==== */
+function scrollToSection(id) {
+  const el = document.getElementById(id);
+  if (el) {
+    const offset = 80;
+    const top = el.getBoundingClientRect().top + window.pageYOffset - offset;
+    window.scrollTo({ top, behavior: 'smooth' });
+  }
+  closeMobileMenu();
 }
-window.addEventListener('scroll',revealOnScroll);
-revealOnScroll();
+function closeMobileMenu() {
+  document.getElementById('hamburger').classList.remove('active');
+  document.getElementById('mobileMenu').classList.remove('active');
+}
+
+/* ==== SCROLL REVEAL ==== */
+const cards = document.querySelectorAll('.product-card');
+const reveal = () => {
+  const trigger = window.innerHeight * 0.85;
+  cards.forEach(c => { if (c.getBoundingClientRect().top < trigger) c.classList.add('visible'); });
+};
+window.addEventListener('scroll', reveal); reveal();
+
+/* ==== HEADER SCROLL ==== */
+const header = document.getElementById('header');
+window.addEventListener('scroll', () => header.classList.toggle('scrolled', window.scrollY > 50));
+
+/* ==== MOBILE MENU ==== */
+const hamburger = document.getElementById('hamburger');
+const mobileMenu = document.getElementById('mobileMenu');
+const closeMenu = document.getElementById('closeMenu');
+
+hamburger.addEventListener('click', (e) => {
+  e.stopPropagation();
+  hamburger.classList.toggle('active');
+  mobileMenu.classList.toggle('active');
+});
+closeMenu.addEventListener('click', closeMobileMenu);
+document.addEventListener('click', (e) => {
+  if (mobileMenu.classList.contains('active') && 
+      !mobileMenu.contains(e.target) && 
+      !hamburger.contains(e.target)) {
+    closeMobileMenu();
+  }
+});
+
+/* ==== LIVE SEARCH ==== */
+const searchInput = document.getElementById('searchInput');
+const mobileSearch = document.getElementById('mobileSearch');
+const dropdown = document.getElementById('searchDropdown');
+const noResults = document.getElementById('noResults');
+const allCards = Array.from(document.querySelectorAll('.product-card'));
+
+function filterProducts(query) {
+  const q = query.toLowerCase().trim();
+  let visible = 0;
+  let suggestions = [];
+
+  allCards.forEach(card => {
+    const name = card.dataset.name;
+    const desc = card.dataset.desc;
+    const matches = name.includes(q) || desc.includes(q);
+    card.style.display = matches ? 'block' : 'none';
+    if (matches && q !== '' && suggestions.length < 6) {
+      suggestions.push({ 
+        name: card.querySelector('h3').textContent, 
+        price: card.querySelector('strong').textContent,
+        id: card.dataset.id
+      });
+    }
+    if (matches) visible++;
+  });
+
+  noResults.style.display = (visible === 0 && q !== '') ? 'block' : 'none';
+
+  if (q === '') {
+    dropdown.classList.remove('active');
+    dropdown.innerHTML = '';
+  } else {
+    dropdown.innerHTML = suggestions.map(s => `
+      <div class="search-item" data-id="${s.id}">
+        <strong>${s.name}</strong>
+        <small>${s.price}</small>
+      </div>
+    `).join('');
+    dropdown.classList.toggle('active', suggestions.length > 0);
+  }
+}
+
+[searchInput, mobileSearch].forEach(input => {
+  if (input) {
+    input.addEventListener('input', (e) => filterProducts(e.target.value));
+    input.addEventListener('focus', () => { if (input.value) filterProducts(input.value); });
+  }
+});
+
+document.querySelector('.search-btn')?.addEventListener('click', () => filterProducts(searchInput.value));
+
+/* ==== MODAL ==== */
+const modal = document.getElementById('productModal');
+const modalClose = document.getElementById('modalClose');
+const modalImg = document.getElementById('modalImg');
+const modalName = document.getElementById('modalName');
+const modalDesc = document.getElementById('modalDesc');
+const modalPrice = document.getElementById('modalPrice');
+const modalForm = document.getElementById('modalForm');
+
+document.querySelectorAll('.product-card').forEach(card => {
+  card.addEventListener('click', (e) => {
+    if (e.target.tagName === 'BUTTON') return;
+    modalImg.src = card.dataset.img;
+    modalName.textContent = card.querySelector('h3').textContent;
+    modalDesc.textContent = card.querySelector('p').textContent;
+    modalPrice.textContent = card.querySelector('strong').textContent;
+    modalForm.action = `/add-to-cart/${card.dataset.id}`;
+    modal.classList.add('active');
+    document.body.style.overflow = 'hidden';
+  });
+});
+
+modalClose.addEventListener('click', closeModal);
+modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+window.addEventListener('scroll', () => { if (modal.classList.contains('active')) closeModal(); });
+
+function closeModal() {
+  modal.classList.remove('active');
+  document.body.style.overflow = 'auto';
+}
+
+dropdown.addEventListener('click', (e) => {
+  const item = e.target.closest('.search-item');
+  if (item) {
+    const id = item.dataset.id;
+    const card = document.querySelector(`.product-card[data-id="${id}"]`);
+    if (card) card.click();
+  }
+});
 </script>
 </body>
 </html>
