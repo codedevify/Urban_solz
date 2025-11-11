@@ -13,23 +13,29 @@ const app = express();
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.raw({ type: 'application/json' }));
 app.use(express.static('public'));
-app.use(session({
-  secret: process.env.SESSION_SECRET || 'urban-solz-secret-2025',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { secure: process.env.NODE_ENV === 'production' }
-}));
+
+// SESSION: SECURE ON RENDER (HTTPS)
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET || 'urban-solz-secure-2025',
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      secure: process.env.NODE_ENV === 'production', // HTTPS on Render
+      httpOnly: true,
+      maxAge: 24 * 60 * 60 * 1000, // 1 day
+    },
+  })
+);
+
 app.set('view engine', 'ejs');
 
 // --- DATABASE ---
-mongoose.connect(process.env.MONGODB_URI)
-  .then(() => {
-    console.log('MongoDB Connected');
-    // Start server AFTER DB is ready
-    startServer();
-  })
-  .catch(err => {
-    console.error('DB Connection Failed:', err);
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log('MongoDB Connected'))
+  .catch((err) => {
+    console.error('DB Error:', err);
     process.exit(1);
   });
 
@@ -40,19 +46,17 @@ const Config = require('./models/Config');
 const Admin = require('./models/Admin');
 const EmailConfig = require('./models/EmailConfig');
 
-// --- DYNAMIC EMAIL CONFIG (Loads after DB ready) ---
+// --- EMAIL CONFIG ---
 let cachedEmailConfig = null;
-
 async function getEmailConfig() {
   if (!cachedEmailConfig) {
     try {
       cachedEmailConfig = await EmailConfig.findOne().lean();
       if (!cachedEmailConfig) {
-        console.log('No EmailConfig → seeding from .env');
         cachedEmailConfig = {
           emailUser: process.env.EMAIL_USER,
           emailPass: process.env.EMAIL_PASS,
-          sellerEmail: process.env.SELLER_EMAIL
+          sellerEmail: process.env.SELLER_EMAIL,
         };
         await new EmailConfig(cachedEmailConfig).save();
       }
@@ -61,7 +65,7 @@ async function getEmailConfig() {
       cachedEmailConfig = {
         emailUser: process.env.EMAIL_USER,
         emailPass: process.env.EMAIL_PASS,
-        sellerEmail: process.env.SELLER_EMAIL
+        sellerEmail: process.env.SELLER_EMAIL,
       };
     }
   }
@@ -79,11 +83,12 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
   let event;
   try {
     event = stripe(config.stripeSecretKey).webhooks.constructEvent(
-      req.body, sig, process.env.STRIPE_WEBHOOK_SECRET
+      req.body,
+      sig,
+      process.env.STRIPE_WEBHOOK_SECRET
     );
   } catch (err) {
-    console.error('Webhook error:', err.message);
-    return res.status(400).send(`Error: ${err.message}`);
+    return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
   if (event.type === 'checkout.session.completed') {
@@ -92,63 +97,34 @@ app.post('/webhook', express.raw({ type: 'application/json' }), async (req, res)
     if (order && order.status === 'Pending') {
       order.status = 'Confirmed';
       await order.save();
-      console.log(`Order ${order._id} confirmed via webhook`);
     }
   }
-
   res.json({ received: true });
 });
 
-// --- ROUTES (Loaded AFTER DB) ---
-let storeRoutes, adminRoutes;
+// --- ROUTES ---
+const storeRoutes = require('./routes/store')(getEmailConfig, app);
+const adminRoutes = require('./routes/admin')(getEmailConfig, app);
 
-async function loadRoutes() {
-  storeRoutes = require('./routes/store')(getEmailConfig, app);
-  adminRoutes = require('./routes/admin')(getEmailConfig, app);
-  app.use('/', storeRoutes);
-  app.use('/admin', adminRoutes);
-}
+app.use('/', storeRoutes);
+app.use('/admin', adminRoutes);
 
-// --- SEED DATA (After DB ready) ---
+// --- SEED ---
 async function seedData() {
   try {
-    if (await Admin.countDocuments() === 0) {
+    if ((await Admin.countDocuments()) === 0) {
       await new Admin({ username: 'admin', password: 'password' }).save();
-      console.log('Admin: admin / password');
-    }
-
-    if (await Product.countDocuments() === 0) {
-      const products = [
-        { name: 'Chelsea Leather Boots', description: 'Premium UK leather', price: 189, image: 'https://via.placeholder.com/300' },
-        { name: 'Oxford Brogues', description: 'Classic British', price: 159, image: 'https://via.placeholder.com/300' }
-      ];
-      await Product.insertMany(products);
-      console.log('2 UK products seeded');
-    }
-
-    if (await Config.countDocuments() === 0) {
-      await new Config({
-        stripePublishableKey: process.env.STRIPE_PUBLISHABLE_KEY || 'pk_test_xxx',
-        stripeSecretKey: process.env.STRIPE_SECRET_KEY || 'sk_test_xxx'
-      }).save();
-      console.log('Stripe config seeded');
+      console.log('Admin seeded');
     }
   } catch (err) {
     console.error('Seed error:', err);
   }
 }
+seedData();
 
-// --- START SERVER (After DB + Seed + Routes) ---
-async function startServer() {
-  await seedData();
-  await loadRoutes();
-
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
-    console.log(`Mode: ${process.env.NODE_ENV || 'development'}`);
-    if (process.env.RENDER) {
-      console.log(`LIVE: https://${process.env.RENDER_EXTERNAL_HOSTNAME}`);
-    }
-  });
-}
+// --- SERVER ---
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+  console.log(`LIVE: https://${process.env.RENDER_EXTERNAL_HOSTNAME}`);
+});
