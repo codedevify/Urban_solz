@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Your Cart | Urban Solz</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
 /* === RESET & BASE === */
 *{margin:0;padding:0;box-sizing:border-box}
@@ -15,7 +16,6 @@ body{
   display:flex;
   flex-direction:column;
 }
-
 /* === HEADER === */
 header{
   background:rgba(255,255,255,0.95);
@@ -39,6 +39,14 @@ header a{
   transition:color .3s;
 }
 header a:hover{color:#a1887f}
+/* === CART COUNT IN HEADER === */
+.cart-link{position:relative;}
+.cart-count{
+  background:#a1887f;color:#fff;font-size:.65rem;
+  width:16px;height:16px;border-radius:50%;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-weight:600;margin-left:4px;
+}
 
 /* === MAIN CART SECTION === */
 main{
@@ -50,7 +58,6 @@ main{
   animation:fadein 1s ease;
 }
 @keyframes fadein{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
-
 main h1{
   font-size:2rem;
   font-weight:700;
@@ -160,15 +167,14 @@ form button:hover{
 </style>
 </head>
 <body>
-
 <header>
   <h1>Urban Solz</h1>
+  <a href="/" class="cart-link">Cart (<span class="cart-count" data-initial="<%= (cart || []).reduce((s,i)=>s+i.quantity,0) %>">0</span>)</a>
   <a href="/">Back to Shop</a>
 </header>
 
 <main>
   <h1>Your Cart</h1>
-
   <% if (cart.length === 0) { %>
     <div class="empty">
       <p>🛍️ Your cart is empty</p>
@@ -178,10 +184,10 @@ form button:hover{
       <% cart.forEach(item => { %>
         <div class="cart-item">
           <span><%= item.name %> × <%= item.quantity %></span>
-          <strong>$<%= item.price * item.quantity %></strong>
+          <strong>$<%= (item.price * item.quantity).toFixed(2) %></strong>
         </div>
       <% }) %>
-      <div class="total">Total: $<%= total %></div>
+      <div class="total">Total: $<%= total.toFixed(2) %></div>
     </div>
 
     <form action="/checkout" method="POST">
@@ -193,5 +199,39 @@ form button:hover{
   <a class="back-link" href="/">← Continue Shopping</a>
 </main>
 
+<script>
+/* ==== CART COUNT SYNC ==== */
+const cartCountEls = document.querySelectorAll('.cart-count');
+const cartCount = {
+  els: cartCountEls,
+  set(count) {
+    this.els.forEach(el => el.textContent = count);
+  },
+  init() {
+    const initial = this.els[0]?.dataset.initial || 0;
+    this.set(initial);
+  }
+};
+
+document.addEventListener('DOMContentLoaded', () => {
+  cartCount.init();
+
+  // 1. Listen for updates from the shop page
+  window.addEventListener('message', e => {
+    if (e.data && e.data.type === 'CART_UPDATE') {
+      cartCount.set(e.data.total);
+    }
+  });
+
+  // 2. If the page was opened directly,ify the count from server
+  (async () => {
+    try {
+      const res = await fetch('/cart-count');
+      const data = await res.json();
+      if (data.success) cartCount.set(data.totalItems);
+    } catch (_) {}
+  })();
+});
+</script>
 </body>
 </html>
