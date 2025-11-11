@@ -18,7 +18,6 @@
     }
     h1,h2,h3,h4{font-family:'Playfair Display',serif;font-weight:700;}
     a{text-decoration:none;color:inherit;}
-
     /* ==== HEADER ==== */
     header{
       position:fixed;top:0;left:0;width:100%;
@@ -45,18 +44,14 @@
     nav.desktop a:hover::after{width:100%;}
     nav.desktop a.active{color:#a1887f;}
     nav.desktop a.active::after{width:100%;}
-
     /* ==== CART LINK WITH COUNT ==== */
-    .cart-link {
-      position: relative;
-    }
-    .cart-count {
+    .cart-link{position:relative;}
+    .cart-count{
       background:#a1887f;color:#fff;font-size:.65rem;
       width:16px;height:16px;border-radius:50%;
       display:inline-flex;align-items:center;justify-content:center;
       font-weight:600;margin-left:4px;
     }
-
     /* ==== SEARCH ==== */
     .search-container{position:relative;max-width:300px;width:100%;}
     .search-wrapper{position:relative;}
@@ -72,8 +67,6 @@
       color:#8d6e63;transition:color .3s;
     }
     .search-btn:hover{color:#a1887f;}
-
-    /* Search Dropdown */
     .search-dropdown{
       position:absolute;top:100%;left:0;width:100%;
       background:#fff;border-radius:12px;margin-top:8px;
@@ -88,7 +81,6 @@
     .search-item:hover{background:#f9f5f2;}
     .search-item strong{font-weight:600;}
     .search-item small{color:#8d6e63;font-size:.85rem;display:block;}
-
     /* ==== MOBILE NAV ICONS ==== */
     .mobile-nav-icons{
       display:flex;gap:1rem;align-items:center;
@@ -106,7 +98,6 @@
     .hamburger.active span:nth-child(1){transform:rotate(45deg) translate(6px,6px);}
     .hamburger.active span:nth-child(2){opacity:0;}
     .hamburger.active span:nth-child(3){transform:rotate(-45deg) translate(7px,-7px);}
-
     /* ==== MOBILE MENU ==== */
     .mobile-menu{
       position:fixed;top:0;right:-100%;width:100%;max-width:320px;height:100vh;
@@ -127,7 +118,6 @@
     .mobile-menu a:last-child{border-bottom:none;}
     .mobile-menu a:hover{color:#a1887f;}
     .mobile-menu a.active{color:#a1887f;font-weight:600;}
-
     /* ==== HERO ==== */
     .hero{
       min-height:100vh;display:flex;align-items:center;justify-content:center;
@@ -160,7 +150,6 @@
       background:#a1887f;color:#fff;transform:translateY(-3px);
       box-shadow:0 12px 30px rgba(0,0,0,.4);
     }
-
     /* ==== PRODUCTS ==== */
     .products-section{padding:100px 5%;text-align:center;position:relative;z-index:1;}
     .products-section h2{font-size:2.6rem;margin-bottom:1rem;color:#2d1e12;}
@@ -172,7 +161,6 @@
       text-align:center;color:#8d6e63;font-size:1.1rem;margin-top:2rem;
       display:none;
     }
-
     .product-grid{
       display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
       gap:2rem;max-width:1400px;margin:0 auto;
@@ -225,7 +213,6 @@
     .add-to-cart-btn:disabled{
       background:#ccc;cursor:not-allowed;transform:none;
     }
-
     /* ==== ABOUT & CONTACT ==== */
     .bottom-section{
       padding:80px 5%;text-align:center;background:#f9f5f2;
@@ -240,7 +227,6 @@
     .bottom-section a{
       color:#a1887f;font-weight:600;
     }
-
     /* ==== MODAL ==== */
     .modal{
       display:none;position:fixed;top:0;left:0;width:100%;height:100%;
@@ -277,7 +263,6 @@
       color:#999;cursor:pointer;transition:color .3s;z-index:10;
     }
     .modal-close:hover{color:#2d1e12;}
-
     /* ==== FOOTER ==== */
     footer{
       background:#2d1e12;color:#e8e0d8;padding:80px 5% 40px;
@@ -306,7 +291,6 @@
       padding-top:1.5rem;text-align:center;
       color:#b39e85;font-size:.85rem;
     }
-
     /* ==== RESPONSIVE ==== */
     @media(max-width:992px){
       .hero h1{font-size:3.5rem;}
@@ -327,7 +311,6 @@
   </style>
 </head>
 <body>
-
 <!-- HEADER -->
 <header id="header">
   <div class="logo">Urban Solz</div>
@@ -336,10 +319,9 @@
     <a onclick="scrollToSection('products-section')">Shop</a>
     <a onclick="scrollToSection('about')">About</a>
     <a onclick="scrollToSection('contact')">Contact</a>
-    <a href="/cart" class="cart-link">Cart (<span class="cart-count"><%= (cart || []).reduce((s,i)=>s+i.quantity,0) %></span>)</a>
+    <a href="/cart" class="cart-link">Cart (<span class="cart-count" data-initial="<%= (cart || []).reduce((s,i)=>s+i.quantity,0) %>">0</span>)</a>
     <a href="/admin/login">Admin</a>
   </nav>
-
   <!-- Desktop Search -->
   <div class="search-container">
     <div class="search-wrapper">
@@ -348,10 +330,9 @@
       <div class="search-dropdown" id="searchDropdown"></div>
     </div>
   </div>
-
   <!-- Mobile Icons -->
   <div class="mobile-nav-icons">
-    <a href="/cart" class="cart-icon">Cart<span class="cart-count"><%= (cart || []).reduce((s,i)=>s+i.quantity,0) %></span></a>
+    <a href="/cart" class="cart-icon">Cart<span class="cart-count" data-initial="<%= (cart || []).reduce((s,i)=>s+i.quantity,0) %>">0</span></a>
     <div class="hamburger" id="hamburger">
       <span></span><span></span><span></span>
     </div>
@@ -365,7 +346,7 @@
   <a onclick="scrollToSection('products-section'); closeMobileMenu()">Shop</a>
   <a onclick="scrollToSection('about'); closeMobileMenu()">About</a>
   <a onclick="scrollToSection('contact'); closeMobileMenu()">Contact</a>
-  <a href="/cart" class="cart-link">Cart (<span class="cart-count"><%= (cart || []).reduce((s,i)=>s+i.quantity,0) %></span>)</a>
+  <a href="/cart" class="cart-link">Cart (<span class="cart-count" data-initial="<%= (cart || []).reduce((s,i)=>s+i.quantity,0) %>">0</span>)</a>
   <a href="/admin/login">Admin</a>
   <input type="text" class="search-input" id="mobileSearch" placeholder="Search heels, sandals..." style="margin:1rem 0;padding:12px 15px;border-radius:30px;border:1px solid #ddd;">
 </div>
@@ -500,7 +481,6 @@ window.addEventListener('scroll', () => header.classList.toggle('scrolled', wind
 const hamburger = document.getElementById('hamburger');
 const mobileMenu = document.getElementById('mobileMenu');
 const closeMenu = document.getElementById('closeMenu');
-
 hamburger.addEventListener('click', (e) => {
   e.stopPropagation();
   hamburger.classList.toggle('active');
@@ -508,8 +488,8 @@ hamburger.addEventListener('click', (e) => {
 });
 closeMenu.addEventListener('click', closeMobileMenu);
 document.addEventListener('click', (e) => {
-  if (mobileMenu.classList.contains('active') && 
-      !mobileMenu.contains(e.target) && 
+  if (mobileMenu.classList.contains('active') &&
+      !mobileMenu.contains(e.target) &&
       !hamburger.contains(e.target)) {
     closeMobileMenu();
   }
@@ -526,24 +506,21 @@ function filterProducts(query) {
   const q = query.toLowerCase().trim();
   let visible = 0;
   let suggestions = [];
-
   allCards.forEach(card => {
     const name = card.dataset.name;
     const desc = card.dataset.desc;
     const matches = name.includes(q) || desc.includes(q);
     card.style.display = matches ? 'block' : 'none';
     if (matches && q !== '' && suggestions.length < 6) {
-      suggestions.push({ 
-        name: card.querySelector('h3').textContent, 
+      suggestions.push({
+        name: card.querySelector('h3').textContent,
         price: card.querySelector('strong').textContent,
         id: card.dataset.id
       });
     }
     if (matches) visible++;
   });
-
   noResults.style.display = (visible === 0 && q !== '') ? 'block' : 'none';
-
   if (q === '') {
     dropdown.classList.remove('active');
     dropdown.innerHTML = '';
@@ -557,14 +534,12 @@ function filterProducts(query) {
     dropdown.classList.toggle('active', suggestions.length > 0);
   }
 }
-
 [searchInput, mobileSearch].forEach(input => {
   if (input) {
-    input.addEventListener('input', (e) => filterProducts(e.target.value));
+    input.addEventListener('input', e => filterProducts(e.target.value));
     input.addEventListener('focus', () => { if (input.value) filterProducts(input.value); });
   }
 });
-
 document.querySelector('.search-btn')?.addEventListener('click', () => filterProducts(searchInput.value));
 
 /* ==== MODAL ==== */
@@ -577,7 +552,7 @@ const modalPrice = document.getElementById('modalPrice');
 const modalAddBtn = document.getElementById('modalAddBtn');
 
 document.querySelectorAll('.product-card').forEach(card => {
-  card.addEventListener('click', (e) => {
+  card.addEventListener('click', e => {
     if (e.target.closest('.add-to-cart-btn')) return;
     modalImg.src = card.dataset.img;
     modalName.textContent = card.querySelector('h3').textContent;
@@ -588,17 +563,15 @@ document.querySelectorAll('.product-card').forEach(card => {
     document.body.style.overflow = 'hidden';
   });
 });
-
 modalClose.addEventListener('click', closeModal);
-modal.addEventListener('click', (e) => { if (e.target === modal) closeModal(); });
+modal.addEventListener('click', e => { if (e.target === modal) closeModal(); });
 window.addEventListener('scroll', () => { if (modal.classList.contains('active')) closeModal(); });
 
 function closeModal() {
   modal.classList.remove('active');
   document.body.style.overflow = 'auto';
 }
-
-dropdown.addEventListener('click', (e) => {
+dropdown.addEventListener('click', e => {
   const item = e.target.closest('.search-item');
   if (item) {
     const id = item.dataset.id;
@@ -607,28 +580,37 @@ dropdown.addEventListener('click', (e) => {
   }
 });
 
-/* ==== AJAX ADD TO CART + REAL-TIME COUNT ==== */
-document.addEventListener('DOMContentLoaded', () => {
-  const cartCountEls = document.querySelectorAll('.cart-count');
-  const initialCount = <%= (cart || []).reduce((s,i)=>s+i.quantity,0) %>;
-  cartCountEls.forEach(el => el.textContent = initialCount);
+/* ==== CART COUNT & AJAX ==== */
+const cartCountEls = document.querySelectorAll('.cart-count');
+const cartCount = {
+  els: cartCountEls,
+  set(count) {
+    this.els.forEach(el => el.textContent = count);
+    // broadcast to any open cart page
+    window.postMessage({ type: 'CART_UPDATE', total: count }, '*');
+  },
+  init() {
+    const initial = this.els[0]?.dataset.initial || 0;
+    this.set(initial);
+  }
+};
 
-  const handleAddToCart = async (btn) => {
+document.addEventListener('DOMContentLoaded', () => {
+  cartCount.init();
+
+  const handleAddToCart = async btn => {
     const id = btn.dataset.id;
     if (!id) return;
-
     btn.disabled = true;
     btn.textContent = 'Adding...';
-
     try {
       const res = await fetch(`/add-to-cart/${id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
       const data = await res.json();
-
       if (data.success) {
-        cartCountEls.forEach(el => el.textContent = data.totalItems);
+        cartCount.set(data.totalItems);
         btn.textContent = 'Added!';
         setTimeout(() => {
           btn.textContent = 'Add to Cart';
@@ -644,18 +626,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   };
 
-  // All Add to Cart buttons
   document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', e => {
       e.preventDefault();
       e.stopPropagation();
       handleAddToCart(btn);
     });
   });
 
-  // Modal Add to Cart
   if (modalAddBtn) {
-    modalAddBtn.addEventListener('click', (e) => {
+    modalAddBtn.addEventListener('click', e => {
       e.preventDefault();
       e.stopPropagation();
       handleAddToCart(modalAddBtn);
@@ -664,6 +644,5 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 </script>
-
 </body>
 </html>
